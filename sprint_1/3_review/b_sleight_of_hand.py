@@ -1,4 +1,4 @@
-# 54997842
+# 55082306
 def get_score(array, count, players=2, skip='.'):
     array = ''.join(array)
     count *= players
@@ -6,10 +6,7 @@ def get_score(array, count, players=2, skip='.'):
     for button in array:
         if button == skip:
             continue
-        if buttons.get(button):
-            buttons[button] += 1
-            continue
-        buttons[button] = 1
+        buttons[button] = buttons.get(button, 0) + 1
     return sum(1 for value in buttons.values() if value <= count)
 
 
