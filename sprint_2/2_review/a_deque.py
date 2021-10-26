@@ -1,4 +1,40 @@
-# 55417030
+# 55472703
+
+"""
+    --- Принцип работы ---
+Для реализации я использовал обычный массив, так как максимальная длинна
+заранее известна, я сразу же зарезервировал в памяти место для каждой ячейки.
+Переменная size при добавлении в хвост или голову увеличивается на единицу,
+это сделанно для того, чтобы знать, когда массив переполнен и поднять
+исключение с ошибкой. А так же, чтобы знать, когда массив пуст и из него
+просто нечего доставать, чтобы так же поднять исключение.
+Переменная tail выставленна на единицу, чтобы при добавлении в хвост или
+голову, когда в массиве только один элемент, оба указателя (tail, head)
+хранили индекс единственного элемента для его получения в дальнейшем.
+При самом добавлении в хвост индекс tail уменьшается, так как элемент должен
+быть позади остальных, при добавлении в голову индекс head наоборот
+увеличивается, чтобы добавить элемент в самую "переднюю" ячейку.
+При удалении индекс головы наоборот уменьшается, а хвоста увеличивается, тем
+самым начиная указывать на предыдущий элемент.
+
+    --- Доказательство корректности ---
+Из описания следует, что индекс tail будет всегда указывать на самую последнюю
+ячейку в массиве, а head наоборот на самую первую. При удалении индексы просто
+сдвигаются на предыдущий элемент, а переменная size не даст вылезти за рамки
+массива или нарушить верное положение указателей головы и хвоста.
+
+    --- Временная сложность ---
+Добавление элемента будет выполняться за O(1), потому что добавление в массив
+по индексу стоит O(1).
+Извлечение элемента будет так же выполнятся за O(1), так как мы получаем
+элемент по индексу, а потом просто сдвигаем индекс на единицу.
+
+    --- Пространственная сложность ---
+Данная реализация требует O(n) памяти, так как при инициализации мы создаём
+массив размером n.
+"""
+
+
 class Deque:
     def __init__(self, max_size):
         self.deque = [0] * max_size
@@ -44,30 +80,25 @@ class Deque:
         return self.deque[previous]
 
 
+def run_command(deque, name, value=None):
+    command = getattr(deque, name)
+    try:
+        if value is None:
+            return command()
+        return command(value)
+    except IndexError as error:
+        return error
+
+
 def run_commands(deque, commands):
     result = []
     for command in commands:
-        if 'push_front' in command:
-            try:
-                deque.push_front(int(command.split()[1]))
-            except IndexError as error:
-                result.append(error)
-        elif 'push_back' in command:
-            try:
-                deque.push_back(int(command.split()[1]))
-            except IndexError as error:
-                result.append(error)
-        elif command == 'pop_front':
-            try:
-                result.append(deque.pop_front())
-            except IndexError as error:
-                result.append(error)
-        else:
-            try:
-                result.append(deque.pop_back())
-            except IndexError as error:
-                result.append(error)
-    return '\n'.join(str(line) for line in result)
+        command = command.split()
+        if len(command) == 1:
+            result.append(run_command(deque, command[0]))
+            continue
+        result.append(run_command(deque, command[0], int(command[1])))
+    return '\n'.join(str(line) for line in result if line is not None)
 
 
 def test_run_commands():
