@@ -13,28 +13,31 @@
 # 73 > 73 -->
 
 def broken_search(nums, target):
-    middle = len(nums) // 2
-    left = 0
-    right = len(nums) - 1
-    while left < right:
-        if nums[middle] == target:
-            return middle
-        if nums[left] == target:
-            return left
-        if nums[right] == target:
-            return right
-        if left == middle or right == middle:
-            break
-        if nums[left] <= target <= nums[right]:
-            if nums[middle] < target:
-                left = middle
-            else:
-                right = middle
-        else:
-            left += 1
-            right -= 1
+    def _broken_search(nums, target, left, right):
+        if left >= right:
+            return -1
         middle = (left + right) // 2
-    return -1
+        while left < right:
+            if nums[middle] == target:
+                return middle
+            if nums[left] == target:
+                return left
+            if nums[right] == target:
+                return right
+            if left == middle or right == middle:
+                break
+            if nums[left] <= target <= nums[right]:
+                if nums[middle] < target:
+                    left = middle
+                else:
+                    right = middle
+            else:
+                _broken_search(nums, target, left, middle)
+                _broken_search(nums, target, middle, right)
+            middle = (left + right) // 2
+        return -1
+    
+    return _broken_search(nums, target, 0, len(nums)-1)
 
 
 def test_broken_search():
@@ -63,5 +66,5 @@ def test_broken_search():
     print('Все тесты пройдены!')
 
 
-# if __name__ == '__main__':
-#     test_broken_search()
+if __name__ == '__main__':
+    test_broken_search()
