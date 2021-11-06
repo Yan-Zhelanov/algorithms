@@ -1,4 +1,4 @@
-from math import pow, fsum
+from math import fsum, pow
 
 
 def get_fibonacci_last_nums(num, count_last):

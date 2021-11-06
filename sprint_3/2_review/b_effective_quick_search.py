@@ -1,3 +1,5 @@
+# 56013109
+import traceback
 from random import randint
 
 
@@ -23,18 +25,12 @@ def quick_sort(array):
     return _quick_sort(array, 0, len(array) - 1)
 
 
-def preparation_data(array):
-    index = 0
-    while index < len(array):
-        array[index] = [
-            -int(array[index][1]), int(array[index][2]), array[index][0]
-        ]
-        index += 1
-    return array
-
-
-def get_winners_name(winners, index_name=2):
-    return '\n'.join(winner[index_name] for winner in winners)
+def determine_winners(participants, name=0, score=1, penalty=2):
+    participants = list(map(lambda participant: [
+        -int(participant[score]), int(participant[penalty]), participant[name],
+    ], participants))
+    quick_sort(participants)
+    return '\n'.join(participant[2] for participant in participants)
 
 
 def test_quick_sort():
@@ -46,25 +42,54 @@ def test_quick_sort():
     assert result == [-10, 10, 30, 99], f'Wrong answer: {result}'
     result = quick_sort([33, 55, -1, -2, -3, 64])
     assert result == [-3, -2, -1, 33, 55, 64], f'Wrong answer: {result}'
-    print(f'{__name__}: Все тесты пройдены!')
+    result = quick_sort([0])
+    assert result == [0], f'Wrong answer: {result}'
+    result = quick_sort([1, 2, 3])
+    assert result == [1, 2, 3], f'Wrong answer: {result}'
+    result = quick_sort([-33, 0, -32, 1, -30, 2])
+    assert result == [-33, -32, -30, 0, 1, 2], f'Wrong answer: {result}'
+    test_name = traceback.extract_stack()[-2].line
+    print(f'{test_name}: Все тесты пройдены!')
 
 
-def test_get_winners():
-    array = preparation_data([
+def test_determine_winners():
+    result = determine_winners([
         ['alla', '4', '100'],
         ['gena', '6', '1000'],
         ['gosha', '2', '90'],
         ['rita', '2', '90'],
         ['timofey', '4', '80'],
     ])
-    array_sort = quick_sort(array)
-    result = get_winners_name(array_sort)
     assert result == 'gena\ntimofey\nalla\ngosha\nrita', (
         f'Wrong answer: {result}'
     )
-    print(f'{__name__}: Все тесты пройдены!')
+    result = determine_winners([
+        ['b', '0', '1000'],
+        ['c', '4', '2000'],
+        ['d', '3', '90'],
+        ['e', '4', '500'],
+        ['gg', '4', '500'],
+    ])
+    assert result == 'e\ngg\nc\nd\nb', f'Wrong answer: {result}'
+    result = determine_winners([
+        ['b', '5', '10'],
+        ['a', '2', '20'],
+        ['g', '2', '0'],
+        ['b', '0', '500'],
+        ['a', '4', '500'],
+    ])
+    assert result == 'b\na\ng\na\nb', f'Wrong answer: {result}'
+    result = determine_winners([
+        ['b', '5', '10'],
+    ])
+    assert result == 'b', f'Wrong answer: {result}'
+    test_name = traceback.extract_stack()[-2].line
+    print(f'{test_name}: Все тесты пройдены!')
 
 
 if __name__ == '__main__':
-    test_quick_sort()
-    test_get_winners()
+    # test_quick_sort()
+    # test_determine_winners()
+    count = int(input())
+    array = [input().split() for _ in range(count)]
+    print(determine_winners(array))
