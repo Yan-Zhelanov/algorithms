@@ -1,3 +1,5 @@
+# 56268438
+
 """
     --- Принцип работы ---
 Каждую итерацию будем разбивать массив на две половинки, так как разрыв в
@@ -29,7 +31,7 @@
 def broken_search(array, target):
     left = 0
     right = len(array) - 1
-    while left < right:
+    while left <= right:
         middle = (left + right) // 2
         if array[middle] == target:
             return middle
@@ -37,13 +39,13 @@ def broken_search(array, target):
             return left
         if array[right] == target:
             return right
-        if array[left] < array[middle]:
-            if target < array[middle]:
+        if array[left] <= array[middle]:
+            if array[left] < target < array[middle]:
                 right = middle - 1
             else:
                 left = middle + 1
-        elif array[middle] < array[right]:
-            if array[middle] < target:
+        elif array[middle] <= array[right]:
+            if array[middle] < target < array[right]:
                 left = middle + 1
             else:
                 right = middle - 1
@@ -73,8 +75,12 @@ def test_broken_search():
     assert result == 8, f'Wrong answer: {result}'
     result = broken_search([0, 1, 2, 3, 44, 55, 73, 99, -33], -99)
     assert result == -1, f'Wrong answer: {result}'
+    result = broken_search([5, 6, 7, 8, 9, 0, 1, 2, 3, 4], 0)
+    assert result == 5, f'Wrong answer: {result}'
+    result = broken_search([1], 1)
+    assert result == 0, f'Wrong answer: {result}'
     print('Все тесты пройдены!')
 
 
-# if __name__ == '__main__':
-#     test_broken_search()
+if __name__ == '__main__':
+    test_broken_search()
