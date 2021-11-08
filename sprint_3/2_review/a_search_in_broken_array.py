@@ -42,44 +42,27 @@
 
 
 def broken_search(array, target):
-    def _binary_search(array, target, left, right):
-        while left <= right:
-            middle = (left + right) // 2
-            if array[middle] == target:
-                return middle
-            if array[left] == target:
-                return left
-            if array[right] == target:
-                return right
+    left = 0
+    right = len(array) - 1
+    while left < right:
+        middle = (left + right) // 2
+        if array[middle] == target:
+            return middle
+        if array[left] == target:
+            return left
+        if array[right] == target:
+            return right
+        if array[left] < array[middle]:
             if target < array[middle]:
-                right = middle - 1
-            elif target > array[middle]:
-                left = middle + 1
-        return -1
-
-    def _find_break(array):
-        left = 0
-        right = len(array) - 1
-        while left <= right:
-            middle = (left + right) // 2
-            if left < middle and array[middle-1] > array[middle]:
-                return middle - 1
-            elif middle < right and array[middle] > array[middle+1]:
-                return middle
-            if array[left] >= array[middle]:
                 right = middle - 1
             else:
                 left = middle + 1
-        return -1
-
-    index_break = _find_break(array)
-    if index_break == -1:
-        return _binary_search(array, target, 0, len(array)-1)
-    if array[index_break] == target:
-        return index_break
-    if array[0] <= target < array[index_break]:
-        return _binary_search(array, target, 0, index_break-1)
-    return _binary_search(array, target, index_break+1, len(array)-1)
+        elif array[middle] < array[right]:
+            if array[middle] < target:
+                left = middle + 1
+            else:
+                right = middle - 1
+    return -1
 
 
 def test_broken_search():
@@ -108,5 +91,5 @@ def test_broken_search():
     print('Все тесты пройдены!')
 
 
-# if __name__ == '__main__':
-#     test_broken_search()
+if __name__ == '__main__':
+    test_broken_search()
