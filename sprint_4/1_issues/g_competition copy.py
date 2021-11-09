@@ -1,32 +1,30 @@
 def determine_max_rounds_draw(rounds):
-    def _hash(num):
-        if num == '0':
-            return -1
-        return 1
-
     rounds = rounds.split()
-    scores = []
-    scores.append(_hash(rounds[0]))
+    if rounds[0] == '0':
+        scores = [[1, 0]]
+    else:
+        scores = [[0, 1]]
     for index in range(len(rounds)-1):
-        scores.append(scores[index] + _hash(rounds[index+1]))
+        score = [scores[index][0], scores[index][1]]
+        score[int(rounds[index+1])] += 1
+        scores.append(score)
     result = []
     for index in range(len(scores)):
         left = scores[index]
-        rights = []
         try:
-            rights.append(len(scores) - scores[left+1::-1].index(left+1) - 1)
+            if left <= 0:
+                right = len(scores) - scores[::-1].index(left+1) - 1
+            else:
+                right = len(scores) - scores[::-1].index(left-1) - 1
         except ValueError:
-            rights.append(index)
-        try:
-            rights.append(len(scores) - scores[left+1::-1].index(left-1) - 1)
-        except ValueError:
-            rights.append(index)
-        right = max(rights)
+            continue
         result.append(len(scores[index:right+1]))
     return max(result)
 
 
 def test_determine_max_rounds_draw():
+    result = determine_max_rounds_draw('0 1 1 1 0 1 0 1 1')
+    assert result == 2, f'Wrong answer: {result}'
     result = determine_max_rounds_draw('0 1')
     assert result == 2, f'Wrong answer: {result}'
     result = determine_max_rounds_draw('0 1 0')
