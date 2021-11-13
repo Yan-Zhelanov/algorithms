@@ -7,8 +7,7 @@ def get_hash(ground, module, text):
     while index < size:
         result = (((result + ord(text[index])) % module) * ground) % module
         index += 1
-    result += ord(text[index])
-    result %= module
+    result = (result + ord(text[index])) % module
     return result
 
 
