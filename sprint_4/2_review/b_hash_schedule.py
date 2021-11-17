@@ -1,10 +1,11 @@
+# 58254522
 class HashMap:
-    MODULE = 6000011
+    MODULE = 1000003
 
     def __init__(self):
         self.items = [None] * self.MODULE
 
-    def get_hash(self, key, ground=123):
+    def get_hash(self, key, ground=113):
         if key == '':
             return 0
         index = 0
@@ -12,9 +13,9 @@ class HashMap:
         size = len(key) - 1
         module = self.MODULE
         while index < size:
-            result = (((result + ord(key[index])) % module) * ground) % module
+            result = ((result + int(key[index]) % module) * ground) % module
             index += 1
-        return (result + ord(key[index])) % module
+        return (result + int(key[index])) % module
 
     def search(self, key):
         hashed_key = self.get_hash(key)
@@ -75,6 +76,13 @@ def test_run_commands():
 
 if __name__ == '__main__':
     test_run_commands()
+    result = []
     count = int(input())
-    commands = [input() for _ in range(count)]
-    print(run_commands(HashMap(), commands))
+    hash_map = HashMap()
+    for _ in range(count):
+        command = input().split()
+        if len(command) == 2:
+            result.append(run_command(hash_map, command[0], command[1]))
+        else:
+            result.append(run_command(hash_map, command[0], command[1], command[2]))
+    print('\n'.join(answer for answer in result if answer is not None))
