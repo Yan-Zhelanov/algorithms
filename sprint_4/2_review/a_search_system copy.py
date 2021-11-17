@@ -1,16 +1,27 @@
 def search(docs, requests):
-    docs_words = []
-    for index in range(len(docs)):
-        docs_words.append({})
+    docs_words = {}
+    index = 0
+    while index < len(docs):
+        # if docs[index] in docs[:index]:
+        #     previous = docs[:index].index(docs[index])
+        #     for word in set(docs[previous].split()):
+        #         docs_words[word][index] = docs_words[word][previous]
+        #     index += 1
+        #     continue
         for word in docs[index].split():
-            docs_words[index][word] = docs_words[index].get(word, 0) + 1
+            docs_words[word] = docs_words.get(word, {})
+            docs_words[word][index] = docs_words[word].get(index, 0) + 1
+        index += 1
     result = []
-    for request_index in range(len(requests)):
-        result.append({index: 0 for index in range(len(docs))})
-        for index in range(len(docs)):
-            for word in set(requests[request_index].split()):
-                if word in docs_words[index]:
-                    result[request_index][index] += docs_words[index][word]
+    for index in range(len(requests)):
+        result.append({})
+        for word in set(requests[index].split()):
+            if word not in docs_words:
+                continue
+            for doc_index, count in docs_words[word].items():
+                result[index][doc_index] = (
+                    result[index].get(doc_index, 0) + count
+                )
     result = [
         [item[0]+1 for item in sorted(
             result[index].items(), key=lambda item: (-item[1], item[0])
