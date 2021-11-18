@@ -2,12 +2,12 @@ def search(docs, requests):
     docs_words = {}
     index = 0
     while index < len(docs):
-        # if docs[index] in docs[:index]:
-        #     previous = docs[:index].index(docs[index])
-        #     for word in set(docs[previous].split()):
-        #         docs_words[word][index] = docs_words[word][previous]
-        #     index += 1
-        #     continue
+        if docs[index] in docs[:index]:
+            previous = docs[:index].index(docs[index])
+            for word in set(docs[previous].split()):
+                docs_words[word][index] = docs_words[word].pop(previous)
+            index += 1
+            continue
         for word in docs[index].split():
             docs_words[word] = docs_words.get(word, {})
             docs_words[word][index] = docs_words[word].get(index, 0) + 1
@@ -29,10 +29,8 @@ def search(docs, requests):
         for index in range(len(result))
     ]
     return '\n'.join(
-        ' '.join(str(element[index]) for index in range(5))
-        if len(element) >= 5
-        else ' '.join(str(element[index]) for index in range(len(element)))
-        for element in result
+        ' '.join(str(index) for index in element[:5])
+        for element in result if len(element) > 0
     )
 
 
@@ -63,15 +61,13 @@ def test_search():
     )
     result = search(
         [
-            'buy flat in moscow', 'rent flat in moscow', 'sell flat in moscow',
-            'want flat in moscow like crazy',
-            'clean flat in moscow on weekends', 'renovate flat in moscow',
+            'one two', 'two two', 'one two', 'two two',
         ],
         [
-            'flat in moscow for crazy weekends', 'flat', 'flat in',
+            'three', 'two', 'two two', 'one', 'one two', 'one two two'
         ],
     )
-    assert result == '4 5 1 2 3\n1 2 3 4 5\n1 2 3 4 5', (
+    assert result == '2 4 1 3\n2 4 1 3\n1 3\n1 2 3 4\n1 2 3 4', (
         f'Wrong answer: {result}'
     )
     result = search(
