@@ -5,36 +5,35 @@ def search(docs, requests):
         if docs[index] in docs[:index]:
             previous = docs[:index].index(docs[index])
             repeats[previous] = repeats.get(previous, []) + [index]
-            index += 1
             continue
         for word in docs[index].split():
             docs_words[word] = docs_words.get(word, {})
             docs_words[word][index] = docs_words[word].get(index, 0) + 1
     result = []
     for request_index in range(len(requests)):
-        result.append({index: 0 for index in range(len(docs))})
+        result.append({})
         for word in set(requests[request_index].split()):
             if word in docs_words:
                 for index, count in docs_words[word].items():
-                    result[request_index][index] += count
+                    result[request_index][index] = (
+                        result[request_index].get(index, 0) + count
+                    )
     result = [
         [
-            item[0]+1
-            if item[0] not in repeats
-            else ' '.join(
-                str(index) for index in (
-                    [item[0]+1] + [index+1 for index in repeats[item[0]]]
-                )
-            )
+            (_index for _index in [[item[0]] + repeats[item[0]]][:5])
+            if item[0] in repeats
+            else item[0]
             for item in sorted(
                 result[index].items(), key=lambda item: (-item[1], item[0])
-            ) if item[1] > 0
+            )[:5] if item[1] > 0
         ] for index in range(len(result))
     ]
     return '\n'.join(
-        ' '.join(str(element[index]) for index in range(5))
-        if len(element) >= 5
-        else ' '.join(str(element[index]) for index in range(len(element)))
+        ' '.join(
+            str(index+1)
+            if 
+            for index in element[:5]
+        )
         for element in result
     )
 
@@ -95,12 +94,12 @@ def test_search():
             'copy paste',
         ],
     )
-    assert result == '1 2 3 4 5 6', f'Wrong answer: {result}'
+    assert result == '1 2 3 4 5', f'Wrong answer: {result}'
     print('Все тесты пройдены!')
 
 
 if __name__ == '__main__':
-    # test_search()
+    test_search()
     count = int(input())
     docs = [input() for _ in range(count)]
     count = int(input())
