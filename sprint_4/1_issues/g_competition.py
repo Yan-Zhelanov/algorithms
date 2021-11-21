@@ -5,7 +5,7 @@ def determine_max_rounds_draw(rounds):
         return 1
 
     score = 0
-    scores = {0: [0]}
+    scores = {0: [-1]}
     max_score = 0
     for index, lap in enumerate(rounds.split()):
         score += _hash(lap)
@@ -40,11 +40,13 @@ def test_determine_max_rounds_draw():
     assert result == 4, f'Wrong answer: {result}'
     result = determine_max_rounds_draw('0 0 1 1 1 0 0 1 1')
     assert result == 8, f'Wrong answer: {result}'
+    result = determine_max_rounds_draw('0 1 0 1 0')
+    assert result == 4, f'Wrong answer: {result}'
     print('Все тесты пройдены!')
 
 
 if __name__ == '__main__':
-    test_determine_max_rounds_draw()
+    # test_determine_max_rounds_draw()
     if input() == '0':
         print(0)
     else:
