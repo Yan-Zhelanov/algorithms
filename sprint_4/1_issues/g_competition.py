@@ -4,26 +4,19 @@ def determine_max_rounds_draw(rounds):
             return -1
         return 1
 
-    rounds = rounds.split()
-    scores = []
-    scores.append(_hash(rounds[0]))
-    for index in range(len(rounds)-1):
-        scores.append(scores[index] + _hash(rounds[index+1]))
-    result = []
-    for index in range(len(scores)):
-        left = scores[index]
-        rights = []
-        try:
-            rights.append(len(scores) - scores[left+1::-1].index(left+1) - 1)
-        except ValueError:
-            rights.append(index)
-        try:
-            rights.append(len(scores) - scores[left+1::-1].index(left-1) - 1)
-        except ValueError:
-            rights.append(index)
-        right = max(rights)
-        result.append(len(scores[index:right+1]))
-    return max(result)
+    score = 0
+    scores = {0: [0]}
+    max_score = 0
+    for index, lap in enumerate(rounds.split()):
+        score += _hash(lap)
+        scores[score] = scores.get(score, []) + [index]
+        if len(scores[score]) > 2:
+            scores[score] = [scores[score][0], scores[score][-1]]
+        if len(scores[score]) == 2:
+            size = scores[score][-1] - scores[score][0]
+            if max_score < size:
+                max_score = size
+    return max_score
 
 
 def test_determine_max_rounds_draw():
@@ -45,6 +38,8 @@ def test_determine_max_rounds_draw():
     assert result == 6, f'Wrong answer: {result}'
     result = determine_max_rounds_draw('0 0 1 0 0 0 1 0 0 1')
     assert result == 4, f'Wrong answer: {result}'
+    result = determine_max_rounds_draw('0 0 1 1 1 0 0 1 1')
+    assert result == 8, f'Wrong answer: {result}'
     print('Все тесты пройдены!')
 
 
