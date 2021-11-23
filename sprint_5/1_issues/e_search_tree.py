@@ -1,30 +1,54 @@
 # Comment it before submitting
-class Node:
-    def __init__(self, value, left=None, right=None):
-        self.value = value
-        self.right = right
-        self.left = left
+# class Node:
+#     def __init__(self, value, left=None, right=None):
+#         self.value = value
+#         self.right = right
+#         self.left = left
 
 
 def solution(root):
+    def _check_previous(operations, current):
+        index = len(operations) - 1
+        while index >= 0:
+            if (
+                operations[index][1] == 'less'
+                and not current < operations[index][0]
+            ):
+                return False
+            elif (
+                operations[index][1] == 'more'
+                and not operations[index][0] < current
+            ):
+                return False
+            index -= 1
+        return True
+
     depth = 0
     tree = [root]
+    operations = []
     while depth >= 0:
         while tree[depth].left and tree[depth].left not in tree:
-            index = depth
-            left = tree[depth].left.value
-            # в таком случае если дерево 1 -> 5 -> 3, то 3 будет больше 1
-            while index >= 0:
-                if not left < tree[index].value:
-                    return False
-                index -= 1
+            if (
+                not tree[depth].left.value < tree[depth].value
+                or operations
+                and not _check_previous(operations, tree[depth].left.value)
+            ):
+                return False
             tree.append(tree[depth].left)
+            operations.append([tree[depth].value, 'less'])
             depth = len(tree) - 1
         while tree[depth].right and tree[depth].right not in tree:
-            if not tree[depth].value < tree[depth].right.value:
+            if (
+                not tree[depth].value < tree[depth].right.value
+                or operations
+                and not _check_previous(operations, tree[depth].right.value)
+            ):
                 return False
             tree.append(tree[depth].right)
+            operations.append([tree[depth].value, 'more'])
             depth = len(tree) - 1
+        if operations:
+            operations.pop()
         depth -= 1
     return True
 
