@@ -5,7 +5,7 @@ def sift_down(heap, index):
     left = index * 2
     right = index * 2 + 1
     largest_index = 0
-    if right <= size and heap[right] > heap[left]:
+    if right <= size and heap[right] > heap[left] > heap[index]:
         largest_index = right
     elif left <= size and heap[left] > heap[index]:
         largest_index = left
@@ -22,6 +22,10 @@ def test_sift_down():
     assert result == 5, f'Wrong answer: {result}'
     result = sift_down([-1, 12, 11, 2, 3, 4, 7, 8], 3)
     assert result == 7, f'Wrong answer: {result}'
+    result = sift_down([-1, 12, 11, 9, 3, 4, 7, 8, 6, 5], 4)
+    assert result == 8, f'Wrong answer: {result}'
+    result = sift_down([-1, 10, 9, 8, 3, 4, 7, 1], 1)
+    assert result == 1, f'Wrong answer: {result}'
     print('Все тесты пройдены!')
 
 
