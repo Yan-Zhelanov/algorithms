@@ -111,8 +111,8 @@ def test_determine_winners():
 
 
 if __name__ == '__main__':
-    test_heapsort()
-    test_determine_winners()
+    # test_heapsort()
+    # test_determine_winners()
     count = int(input())
     array = [input().split() for _ in range(count)]
     print(determine_winners(array))
