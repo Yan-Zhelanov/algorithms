@@ -2,12 +2,12 @@ from random import randint
 
 
 def bypass_graph(count, array, start):
-    graph = [[]] * count
+    graph = [[] for _ in range(count)]
     for line in array:
         if len(line) == 2:
             left, right = int(line[0])-1, int(line[1])-1
-            graph[left] = graph[left] + [right]
-            graph[right] = graph[right] + [left]
+            graph[left].append(right)
+            graph[right].append(left)
     result = []
     stack = [int(start)-1]
     colors = [0] * count
