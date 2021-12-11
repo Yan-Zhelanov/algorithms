@@ -6,39 +6,36 @@ def determine_roads(count, array):
         left, right, weight = int(line[0])-1, int(line[1])-1, int(line[2])
         graph[left][right] = weight
         graph[right][left] = weight
-    mins = [float('inf')] * count
-    checked = [False] * count
-    previous = [None] * count
-    current = 0
-    while False in checked:
+    for current in range(count):
         graph[current][current] = 0
-        if previous[current] is not None:
+        checked = [False] * count
+        previous = [None] * count
+        while False in checked:
+            if previous[current] is not None:
+                for vertex, weight in enumerate(graph[current]):
+                    if previous[vertex] is None:
+                        previous[vertex] = current
+                        continue
+                    if graph[previous[vertex]][vertex] < 1:
+                        continue
+                    final_weight = (
+                        graph[previous[current]][current] + graph[current][vertex]
+                    )
+                    if graph[previous[vertex]][vertex] > final_weight:
+                        graph[current][vertex] = final_weight
+                        previous[vertex] = current
+            checked[current] = True
+            min_weight = [-1, float('inf')]
             for vertex, weight in enumerate(graph[current]):
+                if weight < 1:
+                    continue
                 if previous[vertex] is None:
                     previous[vertex] = current
-                    continue
-                if graph[previous[vertex]][vertex] < 2:
-                    continue
-                final_weight = (
-                    graph[previous[current]][current] + graph[current][vertex]
-                )
-                if graph[previous[vertex]][vertex] > final_weight:
-                    graph[current][vertex] = final_weight
-                    previous[vertex] = current
-        checked[current] = True
-        min_weight = [-1, float('inf')]
-        for vertex, weight in enumerate(graph[current]):
-            if previous[vertex] is None:
-                previous[vertex] = current
-                mins[vertex] = weight
-            if not checked[vertex] and weight > 0 and weight < mins[vertex]:
-                previous[vertex] = current
-                mins[vertex] = weight
-        if min_weight[0] != -1:
-            current = min_weight[0]
-    return
-
-
+                if not checked[vertex] and min_weight[1] > weight:
+                    min_weight = [vertex, weight]
+            if min_weight[0] != -1:
+                current = min_weight[0]
+    return '\n'.join(' '.join(str(num) for num in line) for line in graph)
 
 
 def test_determine_roads():
