@@ -12,34 +12,46 @@ def determine_max_weight(count, array):
             continue
         graph[left][right] = weight
         graph[right][left] = weight
-    not_visited = set(num for num in range(count))
     visited = set()
     edges = []
     max_weight = 0
     current = list(graph[0].keys())[0]
-    while len(not_visited) != 0:
-        not_visited.remove(current)
+    while len(visited) != count:
         visited.add(current)
+        previous = len(edges)
         for vertex in graph[current]:
             if vertex in visited:
                 continue
             edges.append([current, vertex, graph[current][vertex]])
-        edges.sort(key=lambda item: item[2])
-        if len(edges) == 0 or len(not_visited) == 0:
+        if len(edges) == 0 or len(visited) == count:
             break
-        current = edges.pop()
-        while current[1] in visited and len(edges) != 0:
+        if previous != len(edges):
+            edges.sort(key=lambda item: item[2])
+        while True:
             current = edges.pop()
-        if current[1] in visited and len(edges) != 0:
+            if current[1] in visited:
+                if len(edges) == 0:
+                    return 'Oops! I did it again'
+                continue
             break
         max_weight += current[2]
         current = current[1]
-    if len(not_visited) != 0:
+    if len(visited) != count:
         return 'Oops! I did it again'
     return max_weight
 
 
 def test_determine_max_weight():
+    # from random import randint
+    # count = 10000
+    # result = determine_max_weight(count, [
+    #     [
+    #         str(randint(0, 10000)),
+    #         str(randint(0, 10000)),
+    #         str(randint(0, 10000)),
+    #     ]
+    #     for _ in range(count)
+    # ])
     result = determine_max_weight(10, [
         ['9', '10', '4'],
         ['2', '2', '4'],
@@ -96,7 +108,7 @@ def test_determine_max_weight():
 
 
 if __name__ == '__main__':
-    test_determine_max_weight()
+    # test_determine_max_weight()
     count, count_vertex = input().split()
     array = [input().split() for _ in range(int(count_vertex))]
     print(determine_max_weight(int(count), array))

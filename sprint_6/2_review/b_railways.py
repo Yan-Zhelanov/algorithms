@@ -3,10 +3,8 @@ def is_optimal_map(array):
     for index_line, line in enumerate(array):
         for char in line:
             graph[index_line].append(char)
-    not_visited = set(num for num in range(len(array)))
     previous = [None] * (len(array) + 1)
-    while len(not_visited) != 0:
-        current = not_visited.pop()
+    for current in range(len(array)):
         for index, vertex in enumerate(graph[current]):
             if previous[current+index+1] is None:
                 previous[current+index+1] = current
@@ -14,7 +12,7 @@ def is_optimal_map(array):
                 continue
             if vertex != graph[previous[current]][current-previous[current]-1]:
                 continue
-            if graph[previous[current]][previous[current]+index] != vertex:
+            if graph[previous[current]][index+1] != vertex:
                 return 'NO'
             previous[current+index+1] = current
     return 'YES'
@@ -86,6 +84,18 @@ def test_is_optimal_map():
         'R',
     ])
     assert result == 'NO', f'Wrong answer: {result}'
+    result = is_optimal_map([
+        'RRBRRBRRR',
+        'BBBBBBRB',
+        'BBRBRRR',
+        'RRBRRR',
+        'RBRRR',
+        'BBRR',
+        'RRR',
+        'RR',
+        'B',
+    ])
+    assert result == 'YES', f'Wrong answer: {result}'
     print('All tests passed!')
 
 
