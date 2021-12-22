@@ -1,54 +1,4 @@
-class MaxHeap:
-    def __init__(self):
-        self.heap = []
-        self.size = 0
-
-    def key(self, item):
-        return item[2]
-
-    def heapify_down(self, index):
-        heap = self.heap
-        left, right = index * 2, index * 2 + 1
-        if right < self.size:
-            max_index = heap.index(
-                max(heap[index], heap[left], heap[right], key=self.key)
-            )
-        elif left < self.size:
-            max_index = heap.index(
-                max(heap[index], heap[left], key=self.key)
-            )
-        else:
-            return
-        if max_index == index:
-            return
-        heap[index], heap[max_index] = heap[max_index], heap[index]
-        self.heapify_down(max_index)
-
-    def heapify_up(self, index):
-        heap = self.heap
-        parent = index // 2
-        if self.key(heap[parent]) >= self.key(heap[index]):
-            return
-        heap[parent], heap[index] = heap[index], heap[parent]
-        self.heapify_up(parent)
-
-    def is_empty(self):
-        return self.size == 0
-
-    def push(self, value):
-        self.heap.append(value)
-        self.heapify_up(len(self.heap)-1)
-        self.size += 1
-
-    def pop(self):
-        if self.is_empty():
-            raise IndexError('MaxHeap is empty!')
-        heap = self.heap
-        heap[0], heap[-1] = heap[-1], heap[0]
-        removable = heap.pop()
-        self.size -= 1
-        self.heapify_down(0)
-        return removable
+import heapq
 
 
 def determine_max_weight(count, array):
@@ -66,7 +16,7 @@ def determine_max_weight(count, array):
         graph[left][right] = weight
         graph[right][left] = weight
     visited = set()
-    edges = MaxHeap()
+    edges = []
     max_weight = 0
     current = list(graph[0].keys())[0]
     while len(visited) != count:
@@ -74,13 +24,13 @@ def determine_max_weight(count, array):
         for vertex in graph[current]:
             if vertex in visited:
                 continue
-            edges.push([current, vertex, graph[current][vertex]])
-        if edges.is_empty() or len(visited) == count:
+            heapq.heappush(edges, [current, vertex, graph[current][vertex]])
+        if len(edges) == 0 or len(visited) == count:
             break
         while True:
-            current = edges.pop()
+            current = heapq.(edges)
             if current[1] in visited:
-                if edges.is_empty():
+                if len(edges) == 0:
                     return 'Oops! I did it again'
                 continue
             break

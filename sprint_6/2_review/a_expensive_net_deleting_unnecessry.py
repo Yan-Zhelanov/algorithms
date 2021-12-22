@@ -1,10 +1,10 @@
 class MaxHeap:
     def __init__(self):
-        self.heap = []
+        self.heap = {}
         self.size = 0
 
     def key(self, item):
-        return item[2]
+        return self.heap[item][1]
 
     def heapify_down(self, index):
         heap = self.heap
