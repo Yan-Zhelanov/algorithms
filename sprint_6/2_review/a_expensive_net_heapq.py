@@ -1,4 +1,4 @@
-import heapq
+from heapq import heappush, heappop
 
 
 def determine_max_weight(count, array):
@@ -24,18 +24,18 @@ def determine_max_weight(count, array):
         for vertex in graph[current]:
             if vertex in visited:
                 continue
-            heapq.heappush(edges, [current, vertex, graph[current][vertex]])
+            heappush(edges, [-graph[current][vertex], current, vertex])
         if len(edges) == 0 or len(visited) == count:
             break
         while True:
-            current = heapq.(edges)
-            if current[1] in visited:
+            current = heappop(edges)
+            if current[2] in visited:
                 if len(edges) == 0:
                     return 'Oops! I did it again'
                 continue
             break
-        max_weight += current[2]
-        current = current[1]
+        max_weight += -current[0]
+        current = current[2]
     if len(visited) != count:
         return 'Oops! I did it again'
     return max_weight
@@ -98,7 +98,7 @@ def test_determine_max_weight():
 
 
 if __name__ == '__main__':
-    test_determine_max_weight()
+    # test_determine_max_weight()
     count, count_vertex = input().split()
     array = [input().split() for _ in range(int(count_vertex))]
     print(determine_max_weight(int(count), array))
