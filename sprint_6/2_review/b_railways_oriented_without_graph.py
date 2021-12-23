@@ -1,14 +1,7 @@
 def is_optimal_map(array):
-    graph = [[] for _ in range(len(array)+1)]
-    for index_line, line in enumerate(array):
-        for index_char, char in enumerate(line):
-            if char == 'R':
-                graph[index_line].append(index_line+index_char+1)
-                continue
-            graph[index_line+index_char+1].append(index_line)
-    colors = [0] * len(graph)
+    colors = [0] * (len(array)+1)
     stack = []
-    for current in range(len(graph)-1, -1, -1):
+    for current in range(len(array)+1):
         if colors[current] != 0:
             continue
         stack.append(current)
@@ -19,7 +12,21 @@ def is_optimal_map(array):
                 continue
             colors[current] = 1
             stack.append(current)
-            for vertex in graph[current]:
+            for vertex in range(current-1, -1, -1):
+                index_current = current - vertex - 1
+                if array[vertex][index_current] != 'B':
+                    continue
+                if colors[vertex] == 1:
+                    return 'NO'
+                if colors[vertex] == 2:
+                    continue
+                stack.append(vertex)
+            if current == len(array):
+                continue
+            for index_vertex in range(len(array[current])):
+                vertex = current + index_vertex + 1
+                if array[current][index_vertex] != 'R':
+                    continue
                 if colors[vertex] == 1:
                     return 'NO'
                 if colors[vertex] == 2:
@@ -129,9 +136,9 @@ def create_output_for_test():
 
 
 if __name__ == '__main__':
-    test_is_optimal_map()
+    # test_is_optimal_map()
     # create_output_for_test()
     # test_speed_is_optimal_map()
-    # count = int(input())
-    # array = [input() for _ in range(count-1)]
-    # print(is_optimal_map(array))
+    count = int(input())
+    array = [input() for _ in range(count-1)]
+    print(is_optimal_map(array))
