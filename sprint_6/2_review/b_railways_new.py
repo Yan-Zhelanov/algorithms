@@ -1,17 +1,39 @@
+"""
+    --- Принцип работы ---
+В основе приниципа лежит алгоритм поиска в глубину: мы будем красить вершины
+в три цвета, белый — будет нулём, серый — будет единицей, чёрный — будет
+двойкой. Граф будет представлять, как ориентированный: дороги одной буквы будут
+вести вперёд, а другой буквы будут вести назад. Таким образом, если при обходе
+графа в глубину мы наткнёмся на серую вершину, то в графе есть цикл, а значит в
+графе есть две разные дороги для двух вершин, в таком случае будем возвращать
+значение требуемое условиями задачи.
+
+    --- Доказательство корректности ---
+Из описания следует, что если алгоритм поиска в глубину работает корректно, то
+и алгоритм будет работать корректно. В данном случае алгоритм реализован на
+массиве, в массив будем добавлять все встречаемые нам вершины,
+
+    --- Временная сложность ---
+
+
+    --- Пространственная сложность ---
+
+"""
+
+
 def is_optimal_map(count, array):
     graph = [[] for _ in range(count)]
-    for index_line, line in enumerate(array):
-        for index_char, char in enumerate(line):
-            if char == 'R':
-                graph[index_line].append(index_line+index_char+1)
+    for vertex in range(count-1):
+        for index_route in range(len(array[vertex])):
+            if array[vertex][index_route] == 'R':
+                graph[vertex].append(vertex+index_route+1)
                 continue
-            graph[index_line+index_char+1].append(index_line)
+            graph[vertex+index_route+1].append(vertex)
     colors = [0] * count
-    stack = []
-    for current in range(count-1, -1, -1):
-        if colors[current] != 0:
+    for current in range(count):
+        if colors[current] == 2:
             continue
-        stack.append(current)
+        stack = [current]
         while len(stack) != 0:
             current = stack.pop()
             if colors[current] == 1:
@@ -22,9 +44,8 @@ def is_optimal_map(count, array):
             for vertex in graph[current]:
                 if colors[vertex] == 1:
                     return 'NO'
-                if colors[vertex] == 2:
-                    continue
-                stack.append(vertex)
+                if colors[vertex] == 0:
+                    stack.append(vertex)
     return 'YES'
 
 
@@ -109,29 +130,8 @@ def test_is_optimal_map():
     print('All tests passed!')
 
 
-# def test_speed_is_optimal_map():
-#     with open('output.txt', 'r') as array:
-#         array = [line[:-2] for line in array]
-#         is_optimal_map(array)
-
-
-# def create_output_for_test():
-#     from random import choice
-#     count = 3000
-#     text = (
-#         '\n'.join([
-#             ''.join(choice('RB') for _ in range(count-index-1))
-#             for index in range(count-1)
-#         ])
-#     )
-#     with open('output.txt', 'w') as output:
-#         output.writelines(text)
-
-
 if __name__ == '__main__':
     # test_is_optimal_map()
-    # create_output_for_test()
-    # test_speed_is_optimal_map()
     count = int(input())
     array = [input() for _ in range(count-1)]
     print(is_optimal_map(count, array))

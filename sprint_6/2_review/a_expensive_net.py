@@ -1,54 +1,53 @@
-class MaxHeap:
-    def __init__(self):
-        self.heap = []
-        self.size = 0
+# 62414290
 
-    def key(self, item):
-        return item[2]
+"""
+    --- Принцип работы ---
+Граф будем хранить в виде списка словарей смежности: индексом будет вершина,
+ключами будут смежные ей вершины, а в значениях будут лежать веса. Если у двух
+вершин есть кратные рёбра, то будем записывать вес большего ребра. Посещённые
+вершины будем добавлять в множество, а рёбра, которые мы можем посетить будем
+хранить в куче минимума, где вес вершин будем ставить на первое место в
+массиве, при этом добавляя к нему знак отрицания, тем самым в корне кучи будет
+лежать не минимальный элемент, а максимальный. Выберем любую вершину, добавим
+все рёбра смежных ей и одновременно непосещённых вершин. Если количество вершин
+после добавления равняется нулю, значит перед нами несвязный граф, вернём
+соответствующий ответ. Если количество посещённых вершин равняется общему
+количеству вершин, значит мы посетили все возможные вершины и можем закончить
+обход. В противном случае, будем доставать из кучи самые большие ребра, до тех
+пор пока конечная вершина ребра не будет в множестве посещённых вершин или
+рёбра не закончатся. Прибавим вес найденного ребра к нашему ответу и повторим
+все действия для конечной вершины.
 
-    def heapify_down(self, index):
-        heap = self.heap
-        left, right = index * 2, index * 2 + 1
-        if right < self.size:
-            max_index = heap.index(
-                max(heap[index], heap[left], heap[right], key=self.key)
-            )
-        elif left < self.size:
-            max_index = heap.index(
-                max(heap[index], heap[left], key=self.key)
-            )
-        else:
-            return
-        if max_index == index:
-            return
-        heap[index], heap[max_index] = heap[max_index], heap[index]
-        self.heapify_down(max_index)
+    --- Доказательство корректности ---
+Из описания следует, что каждую итерацию мы будем выбирать самое большое ребро
+из рёбер уже посещённых вершин, таким образом мы будем использовать только
+самые "тяжёлые" ребра, которые сформируют максимальное остовное дерево, если
+граф связный.
 
-    def heapify_up(self, index):
-        heap = self.heap
-        parent = index // 2
-        if self.key(heap[parent]) >= self.key(heap[index]):
-            return
-        heap[parent], heap[index] = heap[index], heap[parent]
-        self.heapify_up(parent)
+    --- Временная сложность ---
+Чтобы записать граф в виде списка смежности нам понадобится O(E) времени, где
+E — количество рёбер в графе. Далее мы пройдёмся по каждой вершине и будем
+проверять все смежные ей вершины, в худшем случае, если из каждой вершины можно
+добраться во все остальные вершины: O(V * V-1), где V — количество вершин в
+графе. В лучшем случае, из каждой вершины можно добраться только в одну
+вершину, тогда сложность будет: O(V * 1)
+Итого в худшем: O(E + V^2)
+В среднем: O(E + V^2)
+В лучшем: O(E + V)
 
-    def is_empty(self):
-        return self.size == 0
+    --- Пространственная сложность ---
+Мы будем хранить список смежностей: O(V + E), также мы будем хранить множество
+уже посещённых вершин, по началу оно будет пусто, но под конец будет полностью
+заполнено: O(V), а ещё мы будем хранить ребра, которые мы можем посетить в
+текущий момент: O(E * 3). В лучшем случае мы будем хранить всегда только одно
+ребро: O(1 * 3).
+Итого в худшем: O(V + E + V + E)
+В среднем: O(V + E + V + E)
+В лучшем: O(V + E + V)
+"""
 
-    def push(self, value):
-        self.heap.append(value)
-        self.heapify_up(len(self.heap)-1)
-        self.size += 1
 
-    def pop(self):
-        if self.is_empty():
-            raise IndexError('MaxHeap is empty!')
-        heap = self.heap
-        heap[0], heap[-1] = heap[-1], heap[0]
-        removable = heap.pop()
-        self.size -= 1
-        self.heapify_down(0)
-        return removable
+from heapq import heappush, heappop
 
 
 def determine_max_weight(count, array):
@@ -66,7 +65,7 @@ def determine_max_weight(count, array):
         graph[left][right] = weight
         graph[right][left] = weight
     visited = set()
-    edges = MaxHeap()
+    edges = []
     max_weight = 0
     current = list(graph[0].keys())[0]
     while len(visited) != count:
@@ -74,18 +73,18 @@ def determine_max_weight(count, array):
         for vertex in graph[current]:
             if vertex in visited:
                 continue
-            edges.push([current, vertex, graph[current][vertex]])
-        if edges.is_empty() or len(visited) == count:
+            heappush(edges, [-graph[current][vertex], current, vertex])
+        if len(edges) == 0 or len(visited) == count:
             break
         while True:
-            current = edges.pop()
-            if current[1] in visited:
-                if edges.is_empty():
+            current = heappop(edges)
+            if current[2] in visited:
+                if len(edges) == 0:
                     return 'Oops! I did it again'
                 continue
             break
-        max_weight += current[2]
-        current = current[1]
+        max_weight += -current[0]
+        current = current[2]
     if len(visited) != count:
         return 'Oops! I did it again'
     return max_weight
