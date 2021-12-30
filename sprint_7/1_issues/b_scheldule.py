@@ -48,7 +48,9 @@ def test_determine_max_lessions():
         ['1', '4'],
         ['1', '4'],
     ])
-    assert result == '7\n0 0\n1 2\n2 2\n2 3\n3 3\n3 6\n19 19', f'Wrong answer: {result}'
+    assert result == '7\n0 0\n1 2\n2 2\n2 3\n3 3\n3 6\n19 19', (
+        f'Wrong answer: {result}'
+    )
     print('All tests passed!')
 
 
