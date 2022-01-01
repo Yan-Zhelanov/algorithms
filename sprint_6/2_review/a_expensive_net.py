@@ -1,4 +1,4 @@
-# 62414290
+# 63278661
 
 """
     --- Принцип работы ---
@@ -27,64 +27,66 @@
     --- Временная сложность ---
 Чтобы записать граф в виде списка смежности нам понадобится O(E) времени, где
 E — количество рёбер в графе. Далее мы пройдёмся по каждой вершине и будем
-проверять все смежные ей вершины, в худшем случае, если из каждой вершины можно
-добраться во все остальные вершины: O(V * V-1), где V — количество вершин в
-графе. В лучшем случае, из каждой вершины можно добраться только в одну
-вершину, тогда сложность будет: O(V * 1)
-Итого в худшем и среднем случаях: O(E + V^2)
-В лучшем случае: O(E + V)
+проверять все смежные ей вершины: O(E).
+Итого в худшем, среднем и лучшем случаях: O(E + E)
 
     --- Пространственная сложность ---
-Мы будем хранить список смежностей и веса в нём: O(V + E * 2), также мы будем
-хранить множество уже посещённых вершин, по началу оно будет пусто, но под
-конец будет полностью заполнено: O(V), а ещё мы будем хранить ребра, которые мы
-можем посетить в текущий момент: O(E * 3). В лучшем случае мы будем хранить
-всегда только одно ребро: O(1 * 3).
-Итого в худшем и среднем случаях: O(V + E + V + E)
-В лучшем случае: O(V + E + V)
+Мы будем хранить множество уже посещённых вершин, по началу оно будет пусто,
+но под конец будет полностью заполнено: O(V), а ещё мы будем хранить ребра,
+которые мы можем посетить в текущий момент: O(E * 3). В лучшем случае мы будем
+хранить всегда только одно ребро: O(1 * 3).
+Итого в худшем и среднем случаях: O(V + E)
+В лучшем случае: O(V)
 """
 
 
 from heapq import heappush, heappop
 
+CONNECTIVITY_ERROR = 'Oops! I did it again'
 
-def determine_max_weight(count, array):
-    if count == 1:
-        return 0
-    if len(array) == 0:
-        return 'Oops! I did it again'
+
+def create_graph(count, edges):
     graph = [{} for _ in range(count)]
-    for line in array:
-        if len(line) != 3:
+    for edge in edges:
+        if len(edge) != 3:
             continue
-        left, right, weight = int(line[0])-1, int(line[1])-1, int(line[2])
+        left, right, weight = int(edge[0])-1, int(edge[1])-1, int(edge[2])
         if graph[left].get(right, 0) >= weight:
             continue
         graph[left][right] = weight
         graph[right][left] = weight
-    visited = set()
-    edges = []
-    max_weight = 0
-    current = list(graph[0].keys())[0]
-    while len(visited) != count:
+    return graph
+
+
+def determine_max_weight(count, array, connectivity_error=CONNECTIVITY_ERROR):
+    def _bypass_one_vertex(current, edges, visited):
         visited.add(current)
         for vertex in graph[current]:
-            if vertex in visited:
-                continue
-            heappush(edges, [-graph[current][vertex], current, vertex])
+            if vertex not in visited:
+                heappush(edges, [-graph[current][vertex], current, vertex])
+
+    if count == 1:
+        return 0
+    if len(array) == 0:
+        return connectivity_error
+    edges = []
+    max_weight = 0
+    visited = set()
+    graph = create_graph(count, array)
+    current = list(graph[0].keys())[0]
+    while len(visited) != count:
+        _bypass_one_vertex(current, edges, visited)
         if len(edges) == 0 or len(visited) == count:
             break
-        while True:
+        current = heappop(edges)
+        while current[2] in visited:
+            if len(edges) == 0:
+                return connectivity_error
             current = heappop(edges)
-            if current[2] in visited:
-                if len(edges) == 0:
-                    return 'Oops! I did it again'
-                continue
-            break
         max_weight += -current[0]
         current = current[2]
     if len(visited) != count:
-        return 'Oops! I did it again'
+        return connectivity_error
     return max_weight
 
 
@@ -138,14 +140,14 @@ def test_determine_max_weight():
         ['1', '2', '4'],
         ['2', '1', '2'],
     ])
-    assert result == 'Oops! I did it again', f'Wrong answer: {result}'
+    assert result == CONNECTIVITY_ERROR, f'Wrong answer: {result}'
     result = determine_max_weight(2, [])
-    assert result == 'Oops! I did it again', f'Wrong answer: {result}'
+    assert result == CONNECTIVITY_ERROR, f'Wrong answer: {result}'
     print('All tests passed!')
 
 
 if __name__ == '__main__':
     # test_determine_max_weight()
-    count, count_vertex = input().split()
-    array = [input().split() for _ in range(int(count_vertex))]
+    count, count_edges = input().split()
+    array = [input().split() for _ in range(int(count_edges))]
     print(determine_max_weight(int(count), array))
