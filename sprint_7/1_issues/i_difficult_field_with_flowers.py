@@ -44,7 +44,7 @@ def test_determine_route_with_max_flowers():
     ])
     assert result == '3\nRRU', f'Wrong answer: {result}'
     result = determine_route_with_max_flowers(3, 3, [
-        '101',
+        '100',
         '110',
         '001',
     ])
@@ -59,7 +59,7 @@ def test_determine_route_with_max_flowers():
 
 
 if __name__ == '__main__':
-    test_determine_route_with_max_flowers()
+    # test_determine_route_with_max_flowers()
     height, width = input().split()
     width, height = int(width), int(height)
     field = [input() for _ in range(height)]
