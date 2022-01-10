@@ -1,5 +1,6 @@
 from random import randint
 
+
 def get_hash(codes, ground=1000, module=123987123):
     index = 0
     result = 0
