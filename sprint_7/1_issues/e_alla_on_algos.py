@@ -1,5 +1,15 @@
 def min_count_of_banknotes(need, banknotes):
-    pass
+    banknotes = sorted(
+        [int(banknote) for banknote in banknotes],
+        key=lambda banknote: -banknote,
+    )
+    index = 0
+    result = 0
+    while need != 0:
+        result += need // banknotes[index]
+        need %= banknotes[index]
+        index += 1
+    return result
 
 
 def test_min_count_of_banknotes():
