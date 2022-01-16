@@ -1,11 +1,17 @@
 def is_same_sums(array):
-    array.sort()
-    index = 0
+    if len(array) == 0:
+        return False
+    array.sort(reverse=True)
+    left = array[0]
+    right = 0
+    index = 1
     while index < len(array):
+        if left < right:
+            left += array[index]
+        else:
+            right += array[index]
         index += 1
-        if sum(array[:index]) == sum(array[index:]):
-            return True
-    return False
+    return left == right
 
 
 def test_is_same_sums():
@@ -17,10 +23,16 @@ def test_is_same_sums():
     assert not result
     result = is_same_sums([7, 7, 1, 1, 2])
     assert result
+    result = is_same_sums([1, 2, 3, 4, 5, 1])
+    assert result
+    result = is_same_sums([2, 2, 3, 4, 5, 10])
+    assert not result
     result = is_same_sums([])
     assert not result
     print('All tests passed!')
 
 
 if __name__ == '__main__':
-    test_is_same_sums()
+    # test_is_same_sums()
+    input()
+    print(is_same_sums(list(map(int, input().split()))))
