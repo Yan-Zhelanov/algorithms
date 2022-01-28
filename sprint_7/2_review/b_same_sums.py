@@ -1,4 +1,4 @@
-# 64235344
+# 64506106
 
 """
     --- Принцип работы ---
@@ -40,15 +40,10 @@ def is_same_sums(array):
     dp = [False] * (need+1)
     dp[0] = True
     for i in range(1, len(array)+1):
-        for j in range(need, 0, -1):
-            remainder = j - array[i-1]
-            if remainder < 0:
-                continue
-            if not dp[remainder] or dp[j]:
-                continue
-            if j == need:
+        for j in range(need, array[i-1]-1, -1):
+            dp[j] = dp[j-array[i-1]] or dp[j]
+            if j == need and dp[j]:
                 return True
-            dp[j] = True
     return dp[-1]
 
 
