@@ -1,4 +1,4 @@
-# 64601187
+# 64635163
 
 """
     --- Принцип работы ---
@@ -52,26 +52,26 @@ O(n^2), а в лучшем случае, если строка всего одн
 def unpack(string):
     multipliers = []
     words = []
-    result = ''
+    result = []
     for char in string:
         if char.isnumeric():
             multipliers.append(int(char))
             continue
         if char == '[':
-            words.append('')
+            words.append([])
             continue
         if char == ']':
             if len(words) == 1:
-                result += words.pop() * multipliers.pop()
+                result.append(''.join(words.pop()) * multipliers.pop())
                 continue
-            previous = words.pop()
-            words[-1] += previous * multipliers.pop()
+            previous = ''.join(words.pop())
+            words[-1].append(previous * multipliers.pop())
             continue
         if len(words) == 0:
-            result += char
+            result.append(char)
             continue
-        words[-1] += char
-    return result
+        words[-1].append(char)
+    return ''.join(result)
 
 
 def unpack_strings(strings):

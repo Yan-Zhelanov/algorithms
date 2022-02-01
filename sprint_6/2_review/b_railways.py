@@ -30,6 +30,8 @@ O(V - 1)
 Итого: O(V + V)
 """
 
+import pathlib
+
 WHITE = 0
 GRAY = 1
 BLACK = 2
@@ -147,22 +149,26 @@ def test_is_optimal_map():
     print('All tests passed!')
 
 
+def get_current_path():
+    return str(pathlib.Path(__file__).parent.resolve())
+
+
 def test_speed_is_optimal_map():
-    with open('output.txt', 'r') as array:
+    with open(get_current_path() + '/input.txt', 'r') as array:
         array = [line[:-2] for line in array]
         is_optimal_map(len(array), array)
 
 
 def create_output_for_test():
     from random import choice
-    count = 3000
+    count = 100
     text = (
         '\n'.join([
             ''.join(choice('RB') for _ in range(count-index-1))
             for index in range(count-1)
         ])
     )
-    with open('output.txt', 'w') as output:
+    with open(get_current_path() + '/input.txt', 'w') as output:
         output.writelines(text)
 
 
