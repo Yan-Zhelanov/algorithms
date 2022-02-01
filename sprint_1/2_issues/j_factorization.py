@@ -1,13 +1,15 @@
 def factorize(number):
     divider = 2
     result = []
-    source = number
+    source = number ** 0.5
     while divider <= source:
         if number % divider == 0:
             result.append(divider)
             number //= divider
-        else:
-            divider += 1
+            continue
+        divider += 1
+    if number != 1:
+        result.append(number)
     return ' '.join(str(num) for num in result)
 
 
@@ -32,5 +34,5 @@ def test_factorize():
 
 
 if __name__ == '__main__':
-    test_factorize()
+    # test_factorize()
     print(factorize(int(input())))
